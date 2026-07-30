@@ -1,0 +1,38 @@
+[
+  {
+    "timestamp": "2026-07-30T18:10:22Z",
+    "service": "auth-api",
+    "level": "WARN",
+    "event": "LOGIN_FAILURE",
+    "username": "j_smith",
+    "ip_address": "198.51.100.24",
+    "reason": "Invalid credentials"
+  },
+  {
+    "timestamp": "2026-07-30T18:10:25Z",
+    "service": "auth-api",
+    "level": "WARN",
+    "event": "LOGIN_FAILURE",
+    "username": "j_smith",
+    "ip_address": "198.51.100.24",
+    "reason": "Invalid credentials"
+  },
+  {
+    "timestamp": "2026-07-30T18:10:31Z",
+    "service": "auth-api",
+    "level": "ERROR",
+    "event": "ACCOUNT_LOCKED",
+    "username": "j_smith",
+    "ip_address": "198.51.100.24",
+    "reason": "Max failed attempts exceeded"
+  },
+  {
+    "timestamp": "2026-07-30T18:12:05Z",
+    "service": "sshd",
+    "level": "INFO",
+    "event": "FAILED_PASSWORD",
+    "username": "root",
+    "ip_address": "203.0.113.88",
+    "reason": "Permission denied"
+  }
+]
