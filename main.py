@@ -1,26 +1,36 @@
-from parser import LogParser
-from detector import Detector
-from alert_engine import AlertEngine
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+from parser import parse_auth_log
+from detector import detect_failed_logins
+from alert_engine import generate_alerts
 
-def run_pipeline(log_file, log_type):
-    parser = LogParser()
-    detector = Detector()
-    alert_engine = AlertEngine()
+def main():
+    os.makedirs("reports", exist_ok=True)
 
-    with open(log_file, "r") as f:
-        for line in f:
-            event = parser.parse(line.strip(), log_type)
+    # Step 1: Parse logs
+    events = parse_auth_log("sample_logs/auth.log")
 
-            # Run detection rules
-            brute_alert = detector.brute_force(event)
-            error_alert = detector.error_spike(event)
+    # Step 2: Detect anomalies
+    flagged_ips = detect_failed_logins(events)
 
-            # Send alerts
-            alert_engine.notify(brute_alert)
-            alert_engine.notify(error_alert)
+    # Step 3: Save failed login report
+    report_file = "reports/failed_login_report.csv"
+    df = pd.DataFrame(list(flagged_ips.items()), columns=["IP", "Failed_Attempts"])
+    df.to_csv(report_file, index=False)
+
+    # Step 4: Generate chart
+    chart_file = "reports/failed_login_chart.png"
+    df.plot(kind="bar", x="IP", y="Failed_Attempts", legend=False)
+    plt.title("Failed Login Attempts per IP")
+    plt.ylabel("Attempts")
+    plt.tight_layout()
+    plt.savefig(chart_file)
+
+    # Step 5: Generate alerts
+    generate_alerts(flagged_ips)
+
+    print("Reports generated in /reports folder.")
 
 if __name__ == "__main__":
-    # Example usage
-    run_pipeline("sample_logs/auth.log", "auth")
-    run_pipeline("sample_logs/access.log", "apache")
-    run_pipeline("sample_logs/app.json", "json")
+    main()
