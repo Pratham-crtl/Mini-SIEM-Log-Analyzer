@@ -1,40 +1,17 @@
-import json
 import re
 
-class LogParser:
-    def __init__(self):
-        self.parsers = {
-            "apache": self.parse_apache,
-            "auth": self.parse_auth,
-            "windows": self.parse_windows,
-            "json": self.parse_json
-        }
-
-    def parse(self, log_line, log_type):
-        if log_type in self.parsers:
-            return self.parsers[log_type](log_line)
-        return {"raw": log_line}
-
-    def parse_apache(self, line):
-        # Example: 192.168.1.10 - - [30/Jul/2026:19:59] "GET /index.html" 200
-        match = re.match(r'(?P<ip>\d+\.\d+\.\d+\.\d+).*"(?P<method>\w+) (?P<url>.*?)".* (?P<status>\d+)', line)
-        if match:
-            return match.groupdict()
-        return {"raw": line}
-
-    def parse_auth(self, line):
-        # Example: Jul 30 19:59:01 server sshd[1234]: Failed password for root from 192.168.1.20
-        match = re.match(r'^(?P<timestamp>\w+ +\d+ \d+:\d+:\d+).*Failed password.*from (?P<ip>\d+\.\d+\.\d+\.\d+)', line)
-        if match:
-            return match.groupdict()
-        return {"raw": line}
-
-    def parse_windows(self, line):
-        # Example: Windows Security Event Log (simplified)
-        return {"event": line}
-
-    def parse_json(self, line):
-        try:
-            return json.loads(line)
-        except:
-            return {"raw": line}
+def parse_auth_log(file_path):
+    """
+    Parse auth.log and extract failed login attempts.
+    Returns a list of dicts: [{'ip': 'x.x.x.x', 'timestamp': 'YYYY-MM-DD HH:MM:SS'}]
+    """
+    events = []
+    with open(file_path, 'r') as f:
+        for line in f:
+            if "Failed password" in line:
+                ip_match = re.search(r'from (\d+\.\d+\.\d+\.\d+)', line)
+                if ip_match:
+                    ip = ip_match.group(1)
+                    timestamp = " ".join(line.split()[0:3])  # e.g., Aug 11 22:10:01
+                    events.append({"ip": ip, "timestamp": timestamp})
+    return events
