@@ -9,7 +9,7 @@ def main():
     os.makedirs("reports", exist_ok=True)
 
     # Step 1: Parse logs
-    events = parse_auth_log("sample_logs/auth.log")
+    events = parse_auth_log("sample_logs")
 
     # Step 2: Detect anomalies
     flagged_ips = detect_failed_logins(events)
