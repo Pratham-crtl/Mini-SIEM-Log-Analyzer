@@ -18,4 +18,4 @@ cd Mini-SIEM-Log-Analyzer
 
 pip install -r requirements.txt
 
-python script.py
+python main.py
