@@ -21,6 +21,9 @@ pip install -r requirements.txt
 
 ## 📑 Usage
 ```bash
+# Run the main entry point
+python main.py --input logs/sample.log --output reports/report.csv
+
 python analyzer.py --input logs/sample.log --output reports/report.csv
 (csv reports)
 or
